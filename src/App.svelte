@@ -1,20 +1,24 @@
 <script>
-let plant = null;
+  let plant = null;
 
-async function fetchPlant()
- {
-  try {
-    const res = await fetch('http://localhost:3000/plants');
-    const data = await res.json();
+  // Set your base URL dynamically
+  // When running locally: http://localhost:3000
+  // When deployed: use Railway's provided URL
+  const BASE_URL =
+    import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-    // pick a random plant
-    const randomIndex = Math.floor(Math.random() * data.length);
-    plant = data[randomIndex];
-  } catch (err) {
-    console.error('Failed to fetch plant:', err);
+  async function fetchPlant() {
+    try {
+      const res = await fetch(`${BASE_URL}/plants`);
+      const data = await res.json();
+
+      // pick a random plant
+      const randomIndex = Math.floor(Math.random() * data.data.length);
+      plant = data.data[randomIndex];
+    } catch (err) {
+      console.error('Failed to fetch plant:', err);
+    }
   }
-}
-
 </script>
 
 <main style="padding: 2rem;">

@@ -1,4 +1,3 @@
-// server/index.js
 import express from 'express';
 import fetch from 'node-fetch';
 import cors from 'cors';
@@ -8,39 +7,37 @@ app.use(cors());
 
 const token = 'eJKrigW_GXhmXCUIHysFpaE4ed71vQMGnBlD1w3LkHw';
 let cachedPlants = [];
-let cacheTimestamp = 0;
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-// Fetch multiple pages in parallel
+// Fetch plants from Trefle API
 async function fetchAllPlants() {
-  const pages = [1, 2, 3];
-  const allData = await Promise.all(
-    pages.map(async (page) => {
-      const res = await fetch(
-        `https://trefle.io/api/v1/plants?token=${token}&page=${page}&filter_not[common_name]=null`
-      );
-      const data = await res.json();
-      return data.data;
-    })
-  );
-  return allData.flat();
+  const allPlants = [];
+  for (let page = 1; page <= 3; page++) {
+    const res = await fetch(
+      `https://trefle.io/api/v1/plants?token=${token}&page=${page}&filter_not[common_name]=null`
+    );
+    const data = await res.json();
+    allPlants.push(...data.data);
+  }
+  return allPlants;
 }
 
+// Route to return plants
 app.get('/plants', async (req, res) => {
   try {
-    const now = Date.now();
-    if (!cachedPlants.length || now - cacheTimestamp > CACHE_DURATION) {
-      console.log('Fetching new plants from Trefle API...');
+    if (cachedPlants.length === 0) {
       cachedPlants = await fetchAllPlants();
-      cacheTimestamp = now;
+      // Clear cache in 5 minutes
+      setTimeout(() => (cachedPlants = []), 5 * 60 * 1000);
     }
     res.json({ data: cachedPlants });
   } catch (err) {
-    console.error(err);
+    console.error('Error fetching plants:', err);
     res.status(500).json({ error: 'Failed to fetch plants' });
   }
 });
 
-app.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
+// Use Railway-provided PORT or fallback to 3000
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
