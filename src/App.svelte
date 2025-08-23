@@ -1,31 +1,20 @@
 <script>
   let plant = null;
 
-  // Set your backend URL
   const BASE_URL = import.meta.env.VITE_API_URL || 'https://showmeaplant-production.up.railway.app';
 
   async function fetchPlant() {
     try {
       const url = `${BASE_URL}/plants`;
-      console.log('Fetching from:', url);
-
       const res = await fetch(url);
 
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
       const data = await res.json();
-      console.log('Received from backend:', data);
+      const plantsArray = data.data || [];
 
-      const plantsArray = data.data || []; // backend returns object with data array
+      if (!plantsArray.length) return;
 
-      if (!plantsArray.length) {
-        console.warn('No plants found!');
-        return;
-      }
-
-      // Pick a random plant
       const randomIndex = Math.floor(Math.random() * plantsArray.length);
       plant = plantsArray[randomIndex];
     } catch (err) {
@@ -35,25 +24,35 @@
   }
 </script>
 
-<main style="padding: 2rem;">
-  <div style="margin-top: 1rem;">
-    <h1>show me a plant</h1>
-  </div>
+<main>
+  <h1>show me a plant</h1>
 
-  <button on:click={fetchPlant} style="padding: 0.5rem 1rem; margin-top: 1rem;">
-    🌿
-  </button>
+  <button on:click={fetchPlant}>🌿</button>
 
   {#if plant}
-    <div style="margin-top: 1rem;">
+    <div>
       <h2>{plant.common_name || 'Unknown Common Name'}</h2>
       <p><em>{plant.scientific_name}</em></p>
-
       {#if plant.image_url}
-        <img src={plant.image_url} alt={plant.common_name} width="200" />
+        <img src={plant.image_url} alt={plant.common_name} />
       {:else}
         <p>No image available</p>
       {/if}
     </div>
   {/if}
 </main>
+
+<footer>
+  <span class="leaf-icon">🌿</span>
+  <span class="line">
+    built using 
+    <a href="https://trefle.io" target="_blank" rel="noopener noreferrer">Trefle.io</a> 
+    & written in 
+    <a href="https://svelte.dev" target="_blank" rel="noopener noreferrer">Svelte</a> 
+    by Walid Esse
+  </span>
+  <span class="line">
+    check out my other 
+    <a href="https://walidesse.info" target="_blank" rel="noopener noreferrer">projects</a>
+  </span>
+</footer>
