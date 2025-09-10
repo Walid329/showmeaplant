@@ -1,8 +1,7 @@
 <script>
   let plant = null;
 
-  const BASE_URL = import.meta.env.VITE_API_URL || 'https://showmeaplant-production.up.railway.app';
-
+  const BASE_URL = import.meta.env.VITE_API_URL 
   async function fetchPlant() {
     try {
       const url = `${BASE_URL}/plants`;
