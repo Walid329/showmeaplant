@@ -1,11 +1,15 @@
 import express from 'express';
 import fetch from 'node-fetch';
 import cors from 'cors';
+import dotenv from 'dotenv';
+
+dotenv.config(); // <-- load .env variables
 
 const app = express();
 app.use(cors());
 
-const token = 'eJKrigW_GXhmXCUIHysFpaE4ed71vQMGnBlD1w3LkHw';
+// Use token from .env
+const token = process.env.TREFLE_TOKEN;
 let cachedPlants = [];
 
 // Fetch plants from Trefle API
@@ -26,8 +30,7 @@ app.get('/plants', async (req, res) => {
   try {
     if (cachedPlants.length === 0) {
       cachedPlants = await fetchAllPlants();
-      // Clear cache in 5 minutes
-      setTimeout(() => (cachedPlants = []), 5 * 60 * 1000);
+      setTimeout(() => (cachedPlants = []), 5 * 60 * 1000); // clear cache
     }
     res.json({ data: cachedPlants });
   } catch (err) {
