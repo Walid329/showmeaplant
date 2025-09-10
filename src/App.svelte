@@ -1,11 +1,11 @@
 <script>
   let plant = null;
 
-  const BASE_URL = import.meta.env.VITE_API_URL 
+  const BASE_URL = import.meta.env.VITE_API_URL;
+
   async function fetchPlant() {
     try {
-      const url = `${BASE_URL}/plants`;
-      const res = await fetch(url);
+      const res = await fetch(`${BASE_URL}/plants`);
 
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
