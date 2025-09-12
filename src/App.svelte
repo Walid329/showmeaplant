@@ -3,11 +3,11 @@
   let loading = false;
   let error = null;
 
-  const BASE_URL = import.meta.env.VITE_API_URL || 'https://trefle.io/api/v1';
+  const BASE_URL = import.meta.env.VITE_API_URL;
 
   async function fetchPlant() {
-    console.log('BASE_URL:', BASE_URL);
-    console.log('Full URL:', `${BASE_URL}/plants`);
+   // console.log('BASE_URL:', BASE_URL);
+    //console.log('Full URL:', `${BASE_URL}/plants`);
     
     loading = true;
     error = null;
@@ -15,8 +15,8 @@
     try {
       const res = await fetch(`${BASE_URL}/plants`);
       
-      console.log('Response status:', res.status);
-      console.log('Response headers:', Object.fromEntries(res.headers.entries()));
+     // console.log('Response status:', res.status);
+      //console.log('Response headers:', Object.fromEntries(res.headers.entries()));
       
       if (!res.ok) {
         const errorText = await res.text();
@@ -25,10 +25,10 @@
       }
 
       const data = await res.json();
-      console.log('API Response:', data);
+      //console.log('API Response:', data);
       
       const plantsArray = data.data || [];
-      console.log('Plants array length:', plantsArray.length);
+      //console.log('Plants array length:', plantsArray.length);
 
       if (!plantsArray.length) {
         error = 'No plants found in response';
